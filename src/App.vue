@@ -95,7 +95,17 @@ async function submitContact(event) {
     })
     const result = await response.json()
 
-    if (!response.ok || String(result.success).toLowerCase() !== 'true') {
+    if (!response.ok) {
+      throw new Error('The email service did not accept the submission.')
+    }
+
+    if (String(result.success).toLowerCase() !== 'true') {
+      if (String(result.message).toLowerCase().includes('needs activation')) {
+        contactStatusKind.value = 'pending'
+        contactStatus.value = `FormSubmit sent an activation email to ${portfolioConfig.EMAIL}. Confirm it before sending messages; this test was not delivered.`
+        return
+      }
+
       throw new Error('The email service did not accept the submission.')
     }
 

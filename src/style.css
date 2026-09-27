@@ -50,3 +50,4 @@ button,input,textarea{font:inherit}button,a{-webkit-tap-highlight-color:transpar
 .contact-form .send-button:disabled{cursor:wait;opacity:.65;transform:none}
 .form-status-message{margin:5px 0 0;padding:10px 12px;border-left:2px solid var(--green);background:var(--green-pale);color:var(--text);font-size:11px;line-height:1.6}
 .form-status-message.status-error{border-color:#b4473b;background:color-mix(in srgb,#b4473b 10%,var(--surface));color:var(--text)}
+.form-status-message.status-pending{border-color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,var(--surface));color:var(--text)}
