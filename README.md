@@ -8,7 +8,7 @@ A responsive portfolio for Srivani Golla, Software Developer and Computer Scienc
 - Accessible mobile navigation, keyboard-operable project detail dialogs, active-section navigation, and reduced-motion support.
 - Persistent light/dark theme with system preference support and an early theme initialization to prevent a flash.
 - Project details show no repository or demo actions until real URLs are added.
-- Contact form opens a prefilled email in the visitor's email application; it does not claim or simulate delivery.
+- Contact form submits through FormSubmit and only displays success after the service accepts the message. First-time use requires confirming the activation email sent to the portfolio address.
 - Resume download appears only when an actual PDF URL is configured.
 
 ## Tech Stack
@@ -55,7 +55,7 @@ The `portfolioConfig` object in the same file centralizes `SITE_URL`, `RESUME_UR
 
 To add a resume, place the real PDF under `public/resume/` (for example, `public/resume/Srivani-Golla-Resume.pdf`) and set `RESUME_URL` to `/resume/Srivani-Golla-Resume.pdf`. The download button stays hidden while `RESUME_URL` is empty.
 
-The contact form uses the configured email address with a `mailto:` link. It does not send messages through a backend.
+The contact form posts name, email, and message to `https://formsubmit.co/ajax/<EMAIL>` using the recipient in `portfolioConfig.EMAIL`. FormSubmit emails accepted submissions to that address. On first use, FormSubmit sends an activation email; confirm it before expecting delivery. If the service is unavailable, the form displays the direct email fallback instead of claiming success.
 
 ## Deployment
 

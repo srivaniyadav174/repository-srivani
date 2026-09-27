@@ -10,6 +10,9 @@ const isDark = ref(document.documentElement.dataset.theme === 'dark')
 const menuOpen = ref(false)
 const activeSection = ref('home')
 const selectedProject = ref(null)
+const contactStatus = ref('')
+const contactStatusKind = ref('success')
+const isSubmittingContact = ref(false)
 const modalCloseButton = ref(null)
 const year = new Date().getFullYear()
 const experienceDates = portfolio.experience.dates.split(' – ')
@@ -69,13 +72,42 @@ function handleKeydown(event) {
   }
 }
 
-function submitContact(event) {
-  const values = new FormData(event.currentTarget)
-  const subject = encodeURIComponent(`Portfolio message from ${String(values.get('name'))}`)
-  const body = encodeURIComponent(
-    `Name: ${String(values.get('name'))}\nEmail: ${String(values.get('email'))}\n\n${String(values.get('message'))}`,
-  )
-  window.location.href = `mailto:${portfolioConfig.EMAIL}?subject=${subject}&body=${body}`
+async function submitContact(event) {
+  const form = event.currentTarget
+  const values = new FormData(form)
+  isSubmittingContact.value = true
+  contactStatus.value = ''
+
+  try {
+    const response = await fetch(`https://formsubmit.co/ajax/${portfolioConfig.EMAIL}`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: String(values.get('name') || ''),
+        email: String(values.get('email') || ''),
+        message: String(values.get('message') || ''),
+        _subject: `Portfolio message from ${String(values.get('name') || 'visitor')}`,
+        _honey: String(values.get('_honey') || ''),
+      }),
+    })
+    const result = await response.json()
+
+    if (!response.ok || String(result.success).toLowerCase() !== 'true') {
+      throw new Error('The email service did not accept the submission.')
+    }
+
+    form.reset()
+    contactStatusKind.value = 'success'
+    contactStatus.value = 'Your message was accepted by the email service. If this is your first submission, confirm the activation email sent to your inbox.'
+  } catch {
+    contactStatusKind.value = 'error'
+    contactStatus.value = `The message could not be submitted. Please email ${portfolioConfig.EMAIL} directly.`
+  } finally {
+    isSubmittingContact.value = false
+  }
 }
 
 function onSystemThemeChange(event) {
@@ -225,7 +257,7 @@ onUnmounted(() => {
       <div class="contact-copy"><span class="section-kicker">10 / CONTACT</span><h2>Let’s Build<br /><span>Something Together</span></h2><p>Get in touch about software development, web projects, or collaboration.</p><a class="contact-email" :href="`mailto:${portfolioConfig.EMAIL}`"><Mail :size="17" />{{ portfolioConfig.EMAIL }}<ArrowUpRight :size="15" /></a>
         <div class="contact-methods"><a :href="`tel:${portfolioConfig.PHONE}`"><Phone :size="15" />{{ portfolioConfig.PHONE }}</a><a :href="portfolioConfig.LINKEDIN_URL" target="_blank" rel="noopener noreferrer"><span class="social-mark">in</span>LinkedIn<ArrowUpRight :size="12" /></a><a :href="portfolioConfig.GITHUB_URL" target="_blank" rel="noopener noreferrer"><Code2 :size="15" />GitHub<ArrowUpRight :size="12" /></a><a :href="portfolioConfig.LEETCODE_URL" target="_blank" rel="noopener noreferrer"><Code2 :size="15" />LeetCode<ArrowUpRight :size="12" /></a></div>
       </div>
-      <form class="contact-form" @submit.prevent="submitContact"><div class="form-heading"><span>WRITE A MESSAGE</span><span class="form-required">ALL FIELDS REQUIRED</span></div><label for="contact-name">Name</label><input id="contact-name" name="name" type="text" autocomplete="name" required /><label for="contact-email">Email</label><input id="contact-email" name="email" type="email" autocomplete="email" required /><label for="contact-message">Message</label><textarea id="contact-message" name="message" rows="4" required></textarea><button class="button button-primary send-button" type="submit">SEND MESSAGE <ArrowUpRight :size="15" /></button><p class="form-note">Your email app will open with the message ready to send.</p></form>
+      <form class="contact-form" @submit.prevent="submitContact"><div class="form-heading"><span>WRITE A MESSAGE</span><span class="form-required">ALL FIELDS REQUIRED</span></div><label for="contact-name">Name</label><input id="contact-name" name="name" type="text" autocomplete="name" required /><label for="contact-email">Email</label><input id="contact-email" name="email" type="email" autocomplete="email" required /><label for="contact-message">Message</label><textarea id="contact-message" name="message" rows="4" required /><div class="contact-honeypot" aria-hidden="true"><label for="contact-website">Leave this field empty</label><input id="contact-website" name="_honey" type="text" tabindex="-1" autocomplete="off" /></div><button class="button button-primary send-button" type="submit" :disabled="isSubmittingContact"><span>{{ isSubmittingContact ? 'SENDING...' : 'SEND MESSAGE' }}</span><ArrowUpRight :size="15" /></button><p class="form-note">Submissions are emailed through FormSubmit. First-time delivery requires confirming the activation email.</p><p v-if="contactStatus" class="form-status-message" :class="`status-${contactStatusKind}`" role="status" aria-live="polite">{{ contactStatus }}</p></form>
     </div></div></section>
   </main>
 
