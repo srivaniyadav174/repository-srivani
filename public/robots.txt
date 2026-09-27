@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://repository-srivani-portfolio.onrender.com/sitemap.xml

@@ -3,9 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f8f9f6" />
-    <meta name="description" content="Srivani Golla — aspiring SDET focused on software testing, automation, and building reliable web applications." />
-    <title>Srivani Golla — Aspiring SDET & Software Quality Engineer</title>
+    <meta name="theme-color" content="#f4f6f2" />
+    <script>
+      (() => {
+        try {
+          const saved = localStorage.getItem('portfolio-theme')
+          const dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+          document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#111815' : '#f4f6f2')
+        } catch {
+          document.documentElement.dataset.theme = 'light'
+        }
+      })()
+    </script>
+    <meta name="description" content="Computer Science Engineering student with a foundation in Java, Python, web development, data structures, algorithms, and database management systems. Interested in building responsive, efficient software solutions." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Srivani Golla | Software Developer | Computer Science Engineering Student" />
+    <meta property="og:description" content="Computer Science Engineering student with a foundation in Java, Python, web development, data structures, algorithms, and database management systems." />
+    <meta property="og:url" content="https://repository-srivani-portfolio.onrender.com" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Srivani Golla | Software Developer | Computer Science Engineering Student" />
+    <meta name="twitter:description" content="Computer Science Engineering student interested in responsive applications and efficient software solutions." />
+    <link rel="canonical" href="https://repository-srivani-portfolio.onrender.com" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Srivani Golla | Software Developer | Computer Science Engineering Student</title>
   </head>
   <body>
     <div id="app"></div>
