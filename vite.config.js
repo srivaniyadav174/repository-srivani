@@ -4,4 +4,7 @@ import { defineConfig } from 'vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  preview: {
+    allowedHosts: ['repository-srivani-portfolio.onrender.com'],
+  },
 })
